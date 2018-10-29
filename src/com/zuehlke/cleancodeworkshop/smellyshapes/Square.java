@@ -21,10 +21,23 @@ public class Square extends Rectangle {
 
     public String toString() {
         return String.format("Square: (%d,%d) edgeLength=%d color=%s",
-                             getX(), getY(), getWidth(), c.getColorAsHex());
+                getX(), getY(), getWidth(), c.getColorAsHex());
     }
 
     public boolean contains(int x1, int y1, int x2, int y2) {
         return contains(x1, y1) && contains(x2, y2);
+    }
+
+    @Override
+    public String toXml() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("<square");
+        builder.append(" x=\"" + this.getX() + "\"");
+        builder.append(" y=\"" + this.getY() + "\"");
+        builder.append(" edgeLength=\"" + this.getWidth() + "\"");
+        builder.append(" />\n");
+
+        return builder.toString();
     }
 }

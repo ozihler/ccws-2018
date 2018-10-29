@@ -24,12 +24,26 @@ public class Rectangle extends Shape {
         return height;
     }
 
+    @Override
+    public String toXml() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("<rectangle");
+        builder.append(" x=\"" + this.getX() + "\"");
+        builder.append(" y=\"" + this.getY() + "\"");
+        builder.append(" width=\"" + this.getWidth() + "\"");
+        builder.append(" height=\"" + this.getHeight() + "\"");
+        builder.append(" />\n");
+
+        return builder.toString();
+    }
+
     public boolean contains(int x, int y) {
         return this.x <= x && x <= this.x + width && this.y <= y && y <= this.y + height;
     }
 
     public int calculate() {
-        return width*height;
+        return width * height;
     }
 
     public int getX() {
@@ -42,6 +56,6 @@ public class Rectangle extends Shape {
 
     public String toString() {
         return String.format("Rectangle: (%d,%d) width=%d height=%d color=%s", x, y, width, height,
-                             c.getColorAsHex());
+                c.getColorAsHex());
     }
 }

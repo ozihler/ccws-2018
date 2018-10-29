@@ -1,7 +1,6 @@
 package com.zuehlke.cleancodeworkshop.smellyshapes;
 
 public class Circle extends Shape {
-
     private int x;
     private int y;
     private int radius;
@@ -68,5 +67,17 @@ public class Circle extends Shape {
                 + " RGB=" + this.color.getRed() + ","
                 + this.color.getGreen() + ","
                 + this.color.getBlue();
+    }
+
+    public String toXml() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("<circle");
+        builder.append(" x=\"" + this.getX() + "\"");
+        builder.append(" y=\"" + this.getY() + "\"");
+        builder.append(" radius=\"" + this.getRadius() + "\"");
+        builder.append(" />\n");
+
+        return builder.toString();
     }
 }
