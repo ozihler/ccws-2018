@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("A shape group")
@@ -36,7 +38,7 @@ public class ShapeGroupTest {
         shapeGroup.add(circle);
         shapeGroup.add(circle);
 
-        assertEquals(1, shapeGroup.size);
+        assertEquals(1, shapeGroup.getSize());
     }
 
     @Test
@@ -95,7 +97,7 @@ public class ShapeGroupTest {
 
             shapeGroup.add(new Circle(0, 0, 0));
 
-            assertEquals(1, shapeGroup.size);
+            assertEquals(1, shapeGroup.getSize());
         }
 
 
@@ -108,7 +110,7 @@ public class ShapeGroupTest {
                 shapeGroup.add(new Circle(0, 0, 0));
             }
 
-            assertEquals(11, shapeGroup.size);
+            assertEquals(11, shapeGroup.getSize());
         }
 
         @Test
@@ -123,7 +125,7 @@ public class ShapeGroupTest {
             shapeGroup.add(shape);
             shapeGroup.add(shape);
 
-            assertEquals(10, shapeGroup.size);
+            assertEquals(10, shapeGroup.getSize());
         }
     }
 
@@ -145,7 +147,7 @@ public class ShapeGroupTest {
 
             shapeGroup.add(new Circle(0, 0, 0));
 
-            assertEquals(0, shapeGroup.size);
+            assertEquals(0, shapeGroup.getSize());
         }
     }
 
@@ -157,13 +159,14 @@ public class ShapeGroupTest {
 
         @BeforeEach
         void initWithOneElement() {
-            shapeGroup = new ShapeGroup(new Shape[]{new Circle(0, 0, 0)}, true);
+            final Shape[] shapes = new Shape[]{new Circle(0, 0, 0)};
+            shapeGroup = new ShapeGroup(true, Set.of(shapes));
         }
 
         @Test
         @DisplayName("has a size of 1")
         public void constructor_withShapeArray() {
-            assertEquals(1, shapeGroup.size);
+            assertEquals(1, shapeGroup.getSize());
         }
     }
 
