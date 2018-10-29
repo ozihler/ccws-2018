@@ -18,20 +18,30 @@ public class ShapeGroup extends ComplexShape {
     }
 
     public void add(Shape shape) {
-        if (!readOnly) {
-            if (!contains(shape)) {
-                int newSize = size + 1;
-                if (newSize > shapes.length) {
-                    var newShapes = new Shape[shapes.length + 10];
-                    for (int i = 0; i < size; i++) {
-                        newShapes[i] = shapes[i];
-                    }
-                    shapes = newShapes;
-                }
-
-                shapes[size++] = shape;
-            }
+        if (readOnly || contains(shape)) {
+            return;
         }
+        if (shouldGrow()) {
+            growArray();
+        }
+
+        addToShapes(shape);
+    }
+
+    private void addToShapes(Shape shape) {
+        shapes[size++] = shape;
+    }
+
+    private void growArray() {
+        var newShapes = new Shape[shapes.length + 10];
+        for (int i = 0; i < size; i++) {
+            newShapes[i] = shapes[i];
+        }
+        shapes = newShapes;
+    }
+
+    private boolean shouldGrow() {
+        return size + 1 > shapes.length;
     }
 
     public boolean contains(Shape shape) {
