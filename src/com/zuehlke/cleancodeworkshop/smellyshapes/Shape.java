@@ -4,5 +4,5 @@ public abstract class Shape {
 
     public abstract String toXml();
 
-    public abstract boolean contains(int x, int y);
+    public abstract boolean contains(Point point);
 }

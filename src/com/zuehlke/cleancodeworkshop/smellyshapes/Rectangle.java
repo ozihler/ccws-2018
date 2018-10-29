@@ -3,15 +3,13 @@ package com.zuehlke.cleancodeworkshop.smellyshapes;
 
 public class Rectangle extends Shape {
 
+    private final Point corner;
     protected Color c = new Color("Blue");
-    private int x;
-    private int y;
-    int width;
-    int height;
+    private int width;
+    private int height;
 
-    public Rectangle(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
+    public Rectangle(Point corner, int width, int height) {
+        this.corner = corner;
         this.width = width;
         this.height = height;
     }
@@ -38,8 +36,8 @@ public class Rectangle extends Shape {
         return builder.toString();
     }
 
-    public boolean contains(int x, int y) {
-        return this.x <= x && x <= this.x + width && this.y <= y && y <= this.y + height;
+    public boolean contains(Point point) {
+        return this.corner.getX() <= point.getX() && point.getX() <= this.corner.getX() + width && this.corner.getY() <= point.getY() && point.getY() <= this.corner.getY() + height;
     }
 
     public int calculate() {
@@ -47,15 +45,16 @@ public class Rectangle extends Shape {
     }
 
     public int getX() {
-        return x;
+        return this.corner.getX();
     }
 
     public int getY() {
-        return y;
+        return this.corner.getY();
     }
 
     public String toString() {
-        return String.format("Rectangle: (%d,%d) width=%d height=%d color=%s", x, y, width, height,
+        return String.format("Rectangle: (%d,%d) width=%d height=%d color=%s", this.corner.getX(), this.corner.getY(), width, height,
                 c.getColorAsHex());
     }
+
 }

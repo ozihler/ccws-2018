@@ -2,17 +2,17 @@ package com.zuehlke.cleancodeworkshop.smellyshapes;
 
 public class Square extends Rectangle {
 
-    public Square(int x, int y, int edgeLength) {
-        super(x, y, edgeLength, edgeLength);
+    public Square(int edgeLength, Point corner) {
+        super(corner, edgeLength, edgeLength);
     }
 
-    public Square(int x, int y, int edgeLength, Color color) {
-        super(x, y, edgeLength, edgeLength);
+    public Square(int edgeLength, Color color, Point corner) {
+        this(edgeLength, corner);
         this.c = color;
     }
 
-    public boolean containsPoint(int x, int y) {
-        return getX() <= x && x <= getX() + getWidth() && getY() <= y && y <= getY() + getWidth();
+    public boolean containsPoint(Point point) {
+        return getX() <= point.getX() && point.getX() <= getX() + getWidth() && getY() <= point.getY() && point.getY() <= getY() + getWidth();
     }
 
     public int getHeight() throws RuntimeException {
@@ -24,8 +24,8 @@ public class Square extends Rectangle {
                 getX(), getY(), getWidth(), c.getColorAsHex());
     }
 
-    public boolean contains(int x1, int y1, int x2, int y2) {
-        return contains(x1, y1) && contains(x2, y2);
+    public boolean contains(Point point, Point point1) {
+        return contains(point) && contains(point1);
     }
 
     @Override

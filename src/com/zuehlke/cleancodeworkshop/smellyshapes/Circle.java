@@ -1,20 +1,18 @@
 package com.zuehlke.cleancodeworkshop.smellyshapes;
 
 public class Circle extends Shape {
-    private int x;
-    private int y;
+    private final Point center;
     private int radius;
     private Color color = new Color("Green");
 
-    public Circle(int x, int y, int radius) {
-        this.x = x;
-        this.y = y;
+    public Circle(Point center, int radius) {
+        this.center = center;
         this.radius = radius;
     }
 
-    public boolean contains(int x, int y) {
-        int deltaX = x - this.x;
-        int deltaY = y - this.y;
+    public boolean contains(Point point) {
+        int deltaX = point.getX() - this.center.getX();
+        int deltaY = point.getY() - this.center.getY();
         return square(deltaX) + square(deltaY) <= square(radius);
     }
 
@@ -25,7 +23,7 @@ public class Circle extends Shape {
     public int countContainingPoints(int[] xCords, int[] yCords) {
         int numberOfContainingPoints = 0;
         for (int i = 0; i < xCords.length; ++i) {
-            if (contains(xCords[i], yCords[i])) {
+            if (contains(new Point(xCords[i], yCords[i]))) {
                 numberOfContainingPoints++;
             }
         }
@@ -51,11 +49,11 @@ public class Circle extends Shape {
     }
 
     public int getX() {
-        return x;
+        return this.center.getX();
     }
 
     public int getY() {
-        return y;
+        return this.center.getY();
     }
 
     public int getRadius() {
@@ -63,7 +61,7 @@ public class Circle extends Shape {
     }
 
     public String toString() {
-        return "Circle: (" + this.x + "," + this.y + ") radius= " + radius
+        return "Circle: (" + this.center.getX() + "," + this.center.getY() + ") radius= " + radius
                 + " RGB=" + this.color.getRed() + ","
                 + this.color.getGreen() + ","
                 + this.color.getBlue();

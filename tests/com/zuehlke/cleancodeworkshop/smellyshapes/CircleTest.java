@@ -13,21 +13,21 @@ public class CircleTest {
 
     @BeforeEach
     public void setUp() {
-        circle = new Circle(0, 0, 1);
+        circle = new Circle(new Point(0, 0), 1);
         circle.setColor(new Color("Red"));
     }
 
     @Test
     @DisplayName("returns true if it contains a point and false if not")
     public void contains() {
-        assertTrue(circle.contains(0, 0));
-        assertTrue(circle.contains(0, 1));
-        assertTrue(circle.contains(1, 0));
+        assertTrue(circle.contains(new Point(0, 0)));
+        assertTrue(circle.contains(new Point(0, 1)));
+        assertTrue(circle.contains(new Point(1, 0)));
 
-        assertFalse(circle.contains(1, 1));
-        assertFalse(circle.contains(-1, -1));
-        assertFalse(circle.contains(1, -1));
-        assertFalse(circle.contains(-1, 1));
+        assertFalse(circle.contains(new Point(1, 1)));
+        assertFalse(circle.contains(new Point(-1, -1)));
+        assertFalse(circle.contains(new Point(1, -1)));
+        assertFalse(circle.contains(new Point(-1, 1)));
     }
 
     @Test
