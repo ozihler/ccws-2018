@@ -8,7 +8,7 @@ public class Person {
 
 
 	public Person(String familyName, String givenName, String nationality) {
-		this(familyName, givenName, new PersonNameStrategy(nationality, false, false));
+		this(familyName, givenName, PersonNameStrategyFactory.create(nationality, false, false));
 	}
 
 	public Person(String familyName, String givenName, PersonNameStrategy personNameStrategy) {
