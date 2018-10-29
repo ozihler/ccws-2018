@@ -1,7 +1,7 @@
 package com.zuehlke.cleancodeworkshop.smellyshapes;
 
 
-public class Rectangle extends SimpleShape {
+public class Rectangle extends Shape {
 
     protected Color c = new Color("Blue");
     private int x;

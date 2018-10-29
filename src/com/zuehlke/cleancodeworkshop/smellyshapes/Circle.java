@@ -1,6 +1,6 @@
 package com.zuehlke.cleancodeworkshop.smellyshapes;
 
-public class Circle extends SimpleShape {
+public class Circle extends Shape {
 
     private int x;
     private int y;

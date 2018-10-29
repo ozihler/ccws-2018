@@ -3,8 +3,9 @@ package com.zuehlke.cleancodeworkshop.smellyshapes;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ShapeGroup extends ComplexShape {
+public class ShapeGroup extends Shape {
 
+    protected boolean readOnly = false;
     Shape[] shapes = new Shape[10];
     int size = 0;
 
@@ -57,5 +58,9 @@ public class ShapeGroup extends ComplexShape {
         return Arrays.stream(shapes)
                 .filter(Objects::nonNull)
                 .anyMatch(shape -> shape.contains(x, y));
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 }
