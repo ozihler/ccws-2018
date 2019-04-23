@@ -28,7 +28,7 @@ class SciencePortal implements IPublishScienceEssays {
     @Override
     public void contribute(Submission submission) {
         if (!contributors.contains(submission.getContributor())) {
-            return;
+            throw new IllegalArgumentException(String.format("Author %s is not registered as contributor.", submission.getContributor()));
         }
 
         submissions.add(submission);

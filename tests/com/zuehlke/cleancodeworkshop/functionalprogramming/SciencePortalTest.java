@@ -50,6 +50,8 @@ class SciencePortalTest {
         assertNotEquals(expected2, acm.getSubmissionsOf(author));
         assertEquals(expected2, acm.getSubmissionsOf(otherAuthor));
 
+        assertThrows(IllegalArgumentException.class, () -> acm.contribute(new Submission(null, null)));
+
     }
 
     @Test
