@@ -1,25 +1,46 @@
 package com.zuehlke.cleancodeworkshop.functionalprogramming;
 
-import java.util.Set;
+import java.util.ArrayList;
 
-public class Author {
-    private String company;
-    private Set<BlogEntry> blogEntries;
+public class Author implements
+        IContributeScienceEssays,
+        IReviewScienceEssays {
 
-    public Author(String company, Set<BlogEntry> blogEntries) {
-        this.company = company;
-        this.blogEntries = blogEntries;
+    private final Submissions submissionsToReview;
+    private String name;
+
+    Author(String name) {
+        this.name = name;
+        submissionsToReview = new Submissions(new ArrayList<>());
     }
 
-    public String getCompany() {
-        return this.company;
+    @Override
+    public Submission submit(Essay essay) {
+        return new Submission(this, essay);
     }
 
-    public Set<BlogEntry> getBlogEntries() {
-        return blogEntries;
+    @Override
+    public void notifyAbout(Submission submission) {
+        this.submissionsToReview.add(submission);
     }
 
-    public boolean worksFor(String company) {
-        return getCompany().equalsIgnoreCase(company);
+    @Override
+    public Submissions getSubmissionsToReview() {
+        return submissionsToReview;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void reviewSubmissionsFrom(IPublishScienceEssays publisher) {
+        publisher.subscribeReviewer(this);
+    }
+
+    @Override
+    public void contributeTo(IPublishScienceEssays publisher) {
+        publisher.subscribeContributor(this);
     }
 }
