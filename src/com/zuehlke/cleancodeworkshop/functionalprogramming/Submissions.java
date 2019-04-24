@@ -18,11 +18,11 @@ public class Submissions {
         return titlesOfAllSubmissions;
     }
 
-    Submissions getSubmissionsForContributor(IContributeScienceEssays contributor) {
+    Submissions getSubmissionsForContributor(ScienceEssayContributor contributor) {
         List<Submission> submissionsOfContributor = new ArrayList<>();
 
         submissions.forEach(submission -> {
-            IContributeScienceEssays contributorOfSubmission = submission.getContributor();
+            ScienceEssayContributor contributorOfSubmission = submission.getContributor();
 
             if (contributorOfSubmission.getName().equalsIgnoreCase(contributor.getName())) {
                 submissionsOfContributor.add(submission);
@@ -48,7 +48,9 @@ public class Submissions {
     }
 
     void add(Submission submission) {
-        submissions.add(submission);
+        if (submission != null) {
+            submissions.add(submission);
+        }
     }
 
     @Override
@@ -57,5 +59,31 @@ public class Submissions {
         if (o == null || getClass() != o.getClass()) return false;
         Submissions that = (Submissions) o;
         return Objects.equals(submissions, that.submissions);
+    }
+
+    int count() {
+        return this.submissions.size();
+    }
+
+
+    public void add(Review review) {
+        for (Submission submission : submissions) {
+            if (submission.getId() == review.getSubmissionId()) {
+                if (!submission.isReviewed()) {
+                    if (!submission.wasReviewedBy(review.getReviewer())) {
+                        submission.add(review);
+                    }
+                }
+            }
+        }
+    }
+
+    public Optional<Submission> findSubmissionById(Long submissionId) {
+        for (Submission submission : submissions) {
+            if (submission.getId() == submissionId) {
+                return Optional.of(submission);
+            }
+        }
+        return Optional.empty();
     }
 }

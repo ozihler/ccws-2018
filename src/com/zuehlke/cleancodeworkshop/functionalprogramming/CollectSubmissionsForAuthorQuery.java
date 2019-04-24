@@ -7,7 +7,7 @@ public class CollectSubmissionsForAuthorQuery {
         this.submissions = submissions;
     }
 
-    public Submissions of(IContributeScienceEssays contributor) {
+    public Submissions of(ScienceEssayContributor contributor) {
         return submissions.getSubmissionsForContributor(contributor);
     }
 

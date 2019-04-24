@@ -1,21 +1,23 @@
 package com.zuehlke.cleancodeworkshop.functionalprogramming;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class Submission {
-    private final IContributeScienceEssays submitter;
+    private static long idCounter = 1;
+    private final ScienceEssayContributor submitter;
     private final Essay essay;
+    private final Reviews reviews;
+    private long id;
 
-    Submission(IContributeScienceEssays submitter, Essay essay) {
+    Submission(ScienceEssayContributor submitter, Essay essay) {
         this.submitter = submitter;
         this.essay = essay;
+        this.reviews = new Reviews();
+        this.id = idCounter++;
     }
 
-    public void to(IPublishScienceEssays publisher) {
-        publisher.contribute(this);
-    }
-
-    IContributeScienceEssays getContributor() {
+    ScienceEssayContributor getContributor() {
         return submitter;
     }
 
@@ -30,5 +32,36 @@ public class Submission {
         Submission that = (Submission) o;
         return Objects.equals(essay, that.essay)
                 && Objects.equals(submitter, that.submitter);
+    }
+
+    int getNumberOfReviews() {
+        return reviews.count();
+    }
+
+    public void add(Review review) {
+        this.reviews.add(review);
+    }
+
+    long getId() {
+        return this.id;
+    }
+
+    boolean isReviewed() {
+        return this.reviews.count() >= 2;
+    }
+
+    boolean wasReviewedBy(ScienceEssayReviewer reviewer) {
+        return this.reviews.contains(reviewer);
+    }
+
+    boolean isAccepted() {
+        if (isReviewed()) {
+            return reviews.areAllAccepted();
+        }
+        return false;
+    }
+
+    Set<String> getAllReviewerNames() {
+        return reviews.getAllReviewerNames();
     }
 }

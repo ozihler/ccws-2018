@@ -23,4 +23,9 @@ public class Essay {
         return Objects.equals(title, essay.title) &&
                 Objects.equals(text, essay.text);
     }
+
+
+    public String getText() {
+        return text;
+    }
 }
