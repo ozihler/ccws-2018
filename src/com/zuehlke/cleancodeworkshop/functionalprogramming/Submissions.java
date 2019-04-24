@@ -11,23 +11,30 @@ public class Submissions {
 
     Set<String> getTitlesOfAllSubmissions() {
         Set<String> titlesOfAllSubmissions = new HashSet<>();
-        submissions.forEach(submission -> {
-            Essay essay = submission.getEssay();
-            titlesOfAllSubmissions.add(essay.getTitle());
-        });
+        for (Submission submission : submissions) {
+            addSubmission(titlesOfAllSubmissions, submission);
+        }
         return titlesOfAllSubmissions;
+    }
+
+    private void addSubmission(Set<String> titlesOfAllSubmissions, Submission submission) {
+        Essay essay = submission.getEssay();
+        if (essay != null) {
+            String title = essay.getTitle();
+            titlesOfAllSubmissions.add(title);
+        }
     }
 
     Submissions getSubmissionsForContributor(ScienceEssayContributor contributor) {
         List<Submission> submissionsOfContributor = new ArrayList<>();
 
-        submissions.forEach(submission -> {
-            ScienceEssayContributor contributorOfSubmission = submission.getContributor();
-
-            if (contributorOfSubmission.getName().equalsIgnoreCase(contributor.getName())) {
-                submissionsOfContributor.add(submission);
-            }
-        });
+        submissions.stream()
+                .filter(submission -> {
+                    String name = submission.getContributor().getName();
+                    String contributorName = contributor.getName();
+                    return name.equalsIgnoreCase(contributorName);
+                })
+                .forEach(submissionsOfContributor::add);
 
         return new Submissions(submissionsOfContributor);
     }
@@ -66,7 +73,7 @@ public class Submissions {
     }
 
 
-    public void add(Review review) {
+    void add(Review review) {
         for (Submission submission : submissions) {
             if (submission.getId() == review.getSubmissionId()) {
                 if (!submission.isReviewed()) {
@@ -78,7 +85,7 @@ public class Submissions {
         }
     }
 
-    public Optional<Submission> findSubmissionById(Long submissionId) {
+    Optional<Submission> findSubmissionById(Long submissionId) {
         for (Submission submission : submissions) {
             if (submission.getId() == submissionId) {
                 return Optional.of(submission);

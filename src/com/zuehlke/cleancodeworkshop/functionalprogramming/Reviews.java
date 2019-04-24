@@ -21,31 +21,37 @@ public class Reviews {
     }
 
     public boolean contains(ScienceEssayReviewer reviewer) {
+        boolean contains = false;
         for (Review review : reviews) {
-            if (review.getReviewer().equals(reviewer)) {
-                return true;
-            }
+            contains = review.getReviewer().equals(reviewer);
         }
-        return false;
+        return contains;
     }
 
     boolean areAllAccepted() {
         boolean isAccepted = true;
         for (Review review : reviews) {
-            if (!review.isAccepted()) {
-                isAccepted = false;
-            }
+            isAccepted = isAccepted(review, isAccepted);
+        }
+        return isAccepted;
+    }
+
+    private boolean isAccepted(Review review, boolean isAccepted) {
+        if (!review.isAccepted()) {
+            isAccepted = false;
         }
         return isAccepted;
     }
 
     Set<String> getAllReviewerNames() {
         HashSet<String> reviewerNames = new HashSet<>();
-        reviews.forEach(review -> {
-            ScienceEssayReviewer reviewer = review.getReviewer();
-            String name = reviewer.getName();
-            reviewerNames.add(name);
-        });
+        reviews.forEach(review -> addReviewer(reviewerNames, review));
         return reviewerNames;
+    }
+
+    private void addReviewer(HashSet<String> reviewerNames, Review review) {
+        ScienceEssayReviewer reviewer = review.getReviewer();
+        String name = reviewer.getName();
+        reviewerNames.add(name);
     }
 }

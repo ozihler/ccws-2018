@@ -29,11 +29,11 @@ class SciencePortal implements ScienceEssayPublisher {
 
     @Override
     public Optional<String> findEssayTextBySubmissionId(Long submissionId) {
-        if (submissions.findSubmissionById(submissionId).isPresent()) {
-            Submission submission = submissions.findSubmissionById(submissionId).get();
-            return Optional.of(submission.getEssay().getTitle() + "\n" + submission.getEssay().getText());
+        if (!submissions.findSubmissionById(submissionId).isPresent()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        Submission submission = submissions.findSubmissionById(submissionId).get();
+        return Optional.of(submission.getEssay().getTitle() + "\n" + submission.getEssay().getText());
     }
 
     @Override
@@ -58,11 +58,13 @@ class SciencePortal implements ScienceEssayPublisher {
 
         submissions.add(submission);
 
-        reviewers.forEach(reviewer -> {
-            if (!reviewer.getName().equalsIgnoreCase(submission.getContributor().getName())) {
-                reviewer.notifyAbout(submission);
-            }
-        });
+        reviewers.forEach(reviewer -> notify(submission, reviewer));
+    }
+
+    private void notify(Submission submission, ScienceEssayReviewer reviewer) {
+        if (!reviewer.getName().equalsIgnoreCase(submission.getContributor().getName())) {
+            reviewer.notifyAbout(submission);
+        }
     }
 
     Set<String> getTitlesOfAllSubmissions() {
@@ -70,15 +72,15 @@ class SciencePortal implements ScienceEssayPublisher {
     }
 
     boolean isContributor(ScienceEssayReviewer reviewer) {
+        boolean isContained = false;
         if (reviewers.contains(reviewer)) {
             for (ScienceEssayContributor contributor : contributors) {
                 if (reviewer.getName().equalsIgnoreCase(contributor.getName())) {
-                    return true;
+                    isContained = true;
                 }
             }
-            return false;
         }
-        return false;
+        return isContained;
     }
 
     @Override

@@ -42,7 +42,7 @@ public class Publishers {
         this.publishers.add(publisher);
     }
 
-    public boolean canBeReviewed(Long submissionId) {
+    boolean canBeReviewed(Long submissionId) {
         for (ScienceEssayPublisher publisher : publishers) {
             if (publisher.canBeReviewed(submissionId)) {
                 return true;
