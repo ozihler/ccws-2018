@@ -1,4 +1,5 @@
 package com.zuehlke.cleancodeworkshop.scienceportal;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,14 +12,12 @@ class Publishers {
     }
 
     String findEssayTextBySubmissionId(Long submissionId) {
-        for (var publisher : publishers) {
-            Optional<String> essayTextBySubmissionId = publisher.findEssayTextBySubmissionId(submissionId);
-            if (essayTextBySubmissionId.isPresent()) {
-                return essayTextBySubmissionId.get();
-            }
-        }
-
-        throw new IllegalArgumentException(String.format("Cannot find submission with id %d", submissionId));
+        return publishers.stream()
+                .map(publisher -> publisher.findEssayTextBySubmissionId(submissionId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Cannot find submission with id %d", submissionId)));
     }
 
     void submit(Review review) {
@@ -28,13 +27,11 @@ class Publishers {
     }
 
     void submit(Submission submission, ScienceEssayPublisher publisherToSubmit) {
-        for (ScienceEssayPublisher publisher : publishers) {
-            if (publisher.equals(publisherToSubmit)) {
-                publisher.contribute(submission);
-                return;
-            }
-        }
-        throw new IllegalArgumentException(String.format("You are not contributor of %s", publisherToSubmit.getName()));
+        publishers.stream()
+                .filter(publisher -> publisher.equals(publisherToSubmit))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("You are not contributor of %s", publisherToSubmit.getName())))
+                .contribute(submission);
     }
 
     void add(ScienceEssayPublisher publisher) {
@@ -42,11 +39,7 @@ class Publishers {
     }
 
     boolean canBeReviewed(Long submissionId) {
-        for (ScienceEssayPublisher publisher : publishers) {
-            if (publisher.canBeReviewed(submissionId)) {
-                return true;
-            }
-        }
-        return false;
+        return publishers.stream()
+                .anyMatch(publisher -> publisher.canBeReviewed(submissionId));
     }
 }
