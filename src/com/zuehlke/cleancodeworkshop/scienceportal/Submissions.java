@@ -1,5 +1,12 @@
 package com.zuehlke.cleancodeworkshop.scienceportal;
-import java.util.*;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 public class Submissions {
     private final List<Submission> submissions;
@@ -9,48 +16,27 @@ public class Submissions {
     }
 
     Set<String> getTitlesOfAllSubmissions() {
-        Set<String> titlesOfAllSubmissions = new HashSet<>();
-        for (Submission submission : submissions) {
-            addSubmission(titlesOfAllSubmissions, submission);
-        }
-        return titlesOfAllSubmissions;
-    }
-
-    private void addSubmission(Set<String> titlesOfAllSubmissions, Submission submission) {
-        Essay essay = submission.getEssay();
-        if (essay != null) {
-            String title = essay.getTitle();
-            titlesOfAllSubmissions.add(title);
-        }
+        return submissions.stream()
+                .map(Submission::getEssay)
+                .filter(Objects::nonNull)
+                .map(Essay::getTitle)
+                .collect(toSet());
     }
 
     Submissions getSubmissionsForContributor(ScienceEssayContributor contributor) {
-        List<Submission> submissionsOfContributor = new ArrayList<>();
+        return new Submissions(submissionsOf(contributor));
+    }
 
-        submissions.stream()
-                .filter(submission -> {
-                    String name = submission.getContributor().getName();
-                    String contributorName = contributor.getName();
-                    return name.equalsIgnoreCase(contributorName);
-                })
-                .forEach(submissionsOfContributor::add);
-
-        return new Submissions(submissionsOfContributor);
+    private List<Submission> submissionsOf(ScienceEssayContributor essayContributor) {
+        return submissions.stream()
+                .filter(submission -> submission.isContributor(essayContributor))
+                .collect(Collectors.toList());
     }
 
     long countSubmissionsWithTitleContaining(String query) {
-        List<Submission> essaysWithQueryInTitle = new ArrayList<>();
-
-        submissions.forEach(submission -> {
-            String submissionTitle = submission.getEssay().getTitle().toLowerCase();
-            String queryFormatted = query.toLowerCase();
-
-            if (submissionTitle.contains(queryFormatted)) {
-                essaysWithQueryInTitle.add(submission);
-            }
-        });
-
-        return essaysWithQueryInTitle.size();
+        return submissions.stream()
+                .filter(submission -> submission.hasEssayContainingInTitle(query))
+                .count();
     }
 
     void add(Submission submission) {
@@ -73,23 +59,17 @@ public class Submissions {
 
 
     void add(Review review) {
-        for (Submission submission : submissions) {
-            if (submission.getId() == review.getSubmissionId()) {
-                if (!submission.isReviewed()) {
-                    if (!submission.wasReviewedBy(review.getReviewer())) {
-                        submission.add(review);
-                    }
-                }
-            }
-        }
+        submissions.stream()
+                .filter(submission -> submission.getId() == review.getSubmissionId())
+                .filter(submission -> !submission.isReviewed())
+                .filter(submission -> !submission.wasReviewedBy(review.getReviewer()))
+                .findFirst()
+                .ifPresent(submission -> submission.add(review));
     }
 
     Optional<Submission> findSubmissionById(Long submissionId) {
-        for (Submission submission : submissions) {
-            if (submission.getId() == submissionId) {
-                return Optional.of(submission);
-            }
-        }
-        return Optional.empty();
+        return submissions.stream()
+                .filter(submission -> submission.getId() == submissionId)
+                .findFirst();
     }
 }
