@@ -1,4 +1,5 @@
 package com.zuehlke.cleancodeworkshop.scienceportal;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,20 +29,21 @@ class SciencePortal implements ScienceEssayPublisher {
 
     @Override
     public Optional<String> findEssayTextBySubmissionId(Long submissionId) {
-        if (!submissions.findSubmissionById(submissionId).isPresent()) {
-            return Optional.empty();
-        }
-        Submission submission = submissions.findSubmissionById(submissionId).get();
-        return Optional.of(submission.getEssay().getTitle() + "\n" + submission.getEssay().getText());
+        return submissions.findSubmissionById(submissionId)
+                .map(submission -> submission.getEssay().getTitle() + "\n" + submission.getEssay().getText());
     }
 
     @Override
     public void submit(Review review) {
-        if (reviewers.contains(review.getReviewer())) {
-            this.submissions.add(review);
-            return;
-        }
-        throw new IllegalArgumentException(String.format("Reviewer %s is not registered as reviewer.", review.getReviewer()));
+        reviewers.stream()
+                .filter(r -> r.getName().equals(review.getReviewer().getName()))
+                .findFirst()
+                .ifPresentOrElse(
+                        r -> this.submissions.add(review),
+                        () -> {
+                            throw new IllegalArgumentException(String.format("Reviewer %s is not registered as reviewer.", review.getReviewer()));
+                        }
+                );
     }
 
     @Override
