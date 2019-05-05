@@ -1,7 +1,5 @@
 package com.zuehlke.cleancodeworkshop.scienceportal;
 
-import java.util.Optional;
-
 public class Author implements ScienceEssayContributor, ScienceEssayReviewer {
     private final String name;
     private final SubmissionIds submissionsToReview;
@@ -37,35 +35,21 @@ public class Author implements ScienceEssayContributor, ScienceEssayReviewer {
 
     @Override
     public void reviewNextSubmission() {
-
-        while (submissionsToReview.hasNext()) {
-            Optional<Long> submissionsForContributor = submissionsToReview.next();
-
-            if (submissionsForContributor.isPresent()) {
-                Long submissionId = submissionsForContributor.get();
-                if (this.publishers.canBeReviewed(submissionId)) {
-                    String essayText = this.publishers.findEssayTextBySubmissionId(submissionId);
-
-                    Review review = new Review(submissionId, this);
-                    if (isOriginal(essayText)) {
-                        review.accept();
-                    } else {
-                        review.reject();
-                    }
-
-                    this.publishers.submit(review);
-                    return;
-                } else {
-                    submissionsToReview.remove(submissionId);
-                }
+        while (submissionsToReview.next().isPresent()) {
+            Long submissionId = submissionsToReview.next().get();
+            if (this.publishers.canBeReviewed(submissionId)) {
+                Review review = reviewEssayText(submissionId);
+                this.publishers.submit(review);
+                return;
+            } else {
+                submissionsToReview.remove(submissionId);
             }
         }
-
-
     }
 
-    private boolean isOriginal(String essayText) {
-        return essayText.length() > 20;
+    private Review reviewEssayText(Long submissionId) {
+        String essayText = this.publishers.findEssayTextBySubmissionId(submissionId);
+        return Review.of(essayText, submissionId, this);
     }
 
     @Override

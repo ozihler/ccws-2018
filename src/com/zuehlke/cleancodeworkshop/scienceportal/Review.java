@@ -4,9 +4,28 @@ class Review {
     private final Author reviewer;
     private boolean accepted;
 
-    Review(Long submissionId, Author reviewer) {
+    private Review(Long submissionId, Author reviewer) {
         this.submissionId = submissionId;
         this.reviewer = reviewer;
+    }
+
+    static Review of(Long submissionId, Author reviewer) {
+        return new Review(submissionId, reviewer);
+    }
+
+    public static Review of(String essayText, Long submissionId, Author reviewer) {
+        Review review = of(submissionId, reviewer);
+
+        if (isOriginal(essayText)) {
+            review.accept();
+        } else {
+            review.reject();
+        }
+        return review;
+    }
+
+    private static boolean isOriginal(String essayText) {
+        return essayText.length() > 20;
     }
 
     void accept() {
