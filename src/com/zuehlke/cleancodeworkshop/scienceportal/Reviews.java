@@ -1,8 +1,12 @@
 package com.zuehlke.cleancodeworkshop.scienceportal;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 class Reviews {
     private final List<Review> reviews;
@@ -20,37 +24,20 @@ class Reviews {
     }
 
     boolean contains(ScienceEssayReviewer reviewer) {
-        boolean contains = false;
-        for (Review review : reviews) {
-            contains = review.getReviewer().equals(reviewer);
-        }
-        return contains;
+        return reviews.stream()
+                .anyMatch(review -> review.getReviewer().equals(reviewer));
     }
 
     boolean areAllAccepted() {
-        boolean isAccepted = true;
-        for (Review review : reviews) {
-            isAccepted = isAccepted(review, isAccepted);
-        }
-        return isAccepted;
-    }
-
-    private boolean isAccepted(Review review, boolean isAccepted) {
-        if (!review.isAccepted()) {
-            isAccepted = false;
-        }
-        return isAccepted;
+        return reviews.stream()
+                .allMatch(Review::isAccepted);
     }
 
     Set<String> getAllReviewerNames() {
-        HashSet<String> reviewerNames = new HashSet<>();
-        reviews.forEach(review -> addReviewer(reviewerNames, review));
-        return reviewerNames;
+        return reviews.stream()
+                .map(Review::getReviewer)
+                .map(ScienceEssayReviewer::getName)
+                .collect(toSet());
     }
 
-    private void addReviewer(HashSet<String> reviewerNames, Review review) {
-        ScienceEssayReviewer reviewer = review.getReviewer();
-        String name = reviewer.getName();
-        reviewerNames.add(name);
-    }
 }

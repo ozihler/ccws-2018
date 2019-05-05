@@ -38,18 +38,13 @@ public class Author implements ScienceEssayContributor, ScienceEssayReviewer {
         while (submissionsToReview.next().isPresent()) {
             Long submissionId = submissionsToReview.next().get();
             if (this.publishers.canBeReviewed(submissionId)) {
-                Review review = reviewEssayText(submissionId);
-                this.publishers.submit(review);
+                String essayText = this.publishers.findEssayTextBySubmissionId(submissionId);
+                this.publishers.submit(Review.of(essayText, submissionId, this));
                 return;
             } else {
                 submissionsToReview.remove(submissionId);
             }
         }
-    }
-
-    private Review reviewEssayText(Long submissionId) {
-        String essayText = this.publishers.findEssayTextBySubmissionId(submissionId);
-        return Review.of(essayText, submissionId, this);
     }
 
     @Override

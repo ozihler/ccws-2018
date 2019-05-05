@@ -9,7 +9,7 @@ class Review {
         this.reviewer = reviewer;
     }
 
-    static Review of(Long submissionId, Author reviewer) {
+    private static Review of(Long submissionId, Author reviewer) {
         return new Review(submissionId, reviewer);
     }
 
@@ -21,6 +21,7 @@ class Review {
         } else {
             review.reject();
         }
+
         return review;
     }
 
@@ -28,11 +29,11 @@ class Review {
         return essayText.length() > 20;
     }
 
-    void accept() {
+    private void accept() {
         this.accepted = true;
     }
 
-    void reject() {
+    private void reject() {
         this.accepted = false;
     }
 
