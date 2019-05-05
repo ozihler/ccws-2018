@@ -76,4 +76,8 @@ public class Submission {
     boolean hasEssayContainingInTitle(String query) {
         return getEssay().getTitle().toLowerCase().contains(query.toLowerCase());
     }
+
+    String format() {
+        return getEssay().getTitle() + "\n" + getEssay().getText();
+    }
 }

@@ -61,8 +61,8 @@ public class Submissions {
     void add(Review review) {
         submissions.stream()
                 .filter(submission -> submission.getId() == review.getSubmissionId())
-                .filter(submission -> !submission.isReviewed())
                 .filter(submission -> !submission.wasReviewedBy(review.getReviewer()))
+                .filter(submission -> !submission.isReviewed())
                 .findFirst()
                 .ifPresent(submission -> submission.add(review));
     }
@@ -71,5 +71,9 @@ public class Submissions {
         return submissions.stream()
                 .filter(submission -> submission.getId() == submissionId)
                 .findFirst();
+    }
+
+    Optional<String> formatEssayTextIfExists(Long submissionId) {
+        return findSubmissionById(submissionId).map(Submission::format);
     }
 }

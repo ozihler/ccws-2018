@@ -29,21 +29,25 @@ class SciencePortal implements ScienceEssayPublisher {
 
     @Override
     public Optional<String> findEssayTextBySubmissionId(Long submissionId) {
-        return submissions.findSubmissionById(submissionId)
-                .map(submission -> submission.getEssay().getTitle() + "\n" + submission.getEssay().getText());
+        return submissions.formatEssayTextIfExists(submissionId);
     }
 
     @Override
     public void submit(Review review) {
-        reviewers.stream()
-                .filter(r -> r.getName().equals(review.getReviewer().getName()))
-                .findFirst()
-                .ifPresentOrElse(
-                        r -> this.submissions.add(review),
-                        () -> {
-                            throw new IllegalArgumentException(String.format("Reviewer %s is not registered as reviewer.", review.getReviewer()));
-                        }
-                );
+        if (!isRegisteredReviewer(review.getReviewer())) {
+            throw new IllegalArgumentException(String.format("Reviewer %s is not registered as reviewer.", review.getReviewer()));
+        }
+
+        save(review);
+    }
+
+    private void save(Review review) {
+        this.submissions.add(review);
+    }
+
+    private boolean isRegisteredReviewer(ScienceEssayReviewer reviewerToCheck) {
+        return reviewers.stream()
+                .anyMatch(reviewer -> reviewer.getName().equals(reviewerToCheck.getName()));
     }
 
     @Override
@@ -53,12 +57,16 @@ class SciencePortal implements ScienceEssayPublisher {
 
     @Override
     public void contribute(Submission submission) {
-        if (!contributors.contains(submission.getContributor())) {
+        if (!isContributor(submission.getContributor())) {
             throw new IllegalArgumentException(String.format("Contributor %s is not registered as contributor.", submission.getContributor()));
         }
 
         save(submission);
         notifyReviewersOf(submission);
+    }
+
+    private boolean isContributor(ScienceEssayContributor contributor) {
+        return contributors.contains(contributor);
     }
 
     private void save(Submission submission) {
@@ -79,16 +87,17 @@ class SciencePortal implements ScienceEssayPublisher {
         return Queries.collectTitles().of(submissions);
     }
 
-    boolean isContributor(ScienceEssayReviewer reviewer) {
-        boolean isContained = false;
-        if (reviewers.contains(reviewer)) {
-            for (ScienceEssayContributor contributor : contributors) {
-                if (isContributor(reviewer, contributor)) {
-                    isContained = true;
-                }
-            }
-        }
-        return isContained;
+    boolean isRegisteredAsContributor(ScienceEssayReviewer reviewer) {
+        return isReviewer(reviewer) && isContributor(reviewer);
+    }
+
+    private boolean isContributor(ScienceEssayReviewer reviewer) {
+        return contributors.stream()
+                .anyMatch(contributor -> isContributor(reviewer, contributor));
+    }
+
+    private boolean isReviewer(ScienceEssayReviewer reviewer) {
+        return reviewers.contains(reviewer);
     }
 
     @Override
@@ -106,38 +115,30 @@ class SciencePortal implements ScienceEssayPublisher {
 
     @Override
     public int getNumberOfReviewsBySubmissionId(long submissionId) {
-        if (submissions.findSubmissionById(submissionId).isPresent()) {
-            return submissions.findSubmissionById(submissionId).get().getNumberOfReviews();
-        } else {
-            return 0;
-        }
+        return submissions.findSubmissionById(submissionId)
+                .map(Submission::getNumberOfReviews)
+                .orElse(0);
     }
 
     @Override
     public boolean gotAccepted(long submissionId) {
-        if (submissions.findSubmissionById(submissionId).isPresent()) {
-            return submissions.findSubmissionById(submissionId).get().isAccepted();
-        }
-        return false;
+        return submissions.findSubmissionById(submissionId)
+                .map(Submission::isAccepted)
+                .orElse(false);
     }
 
     @Override
     public Set<String> getNamesOfReviewersOf(long submissionId) {
-        Optional<Submission> submissionById = submissions.findSubmissionById(submissionId);
-        if (submissionById.isPresent()) {
-            Submission submission = submissionById.get();
-            return submission.getAllReviewerNames();
-        }
-        return Set.of();
+        return submissions.findSubmissionById(submissionId)
+                .map(Submission::getAllReviewerNames)
+                .orElseGet(Set::of);
     }
 
     @Override
     public boolean canBeReviewed(Long submissionId) {
-        if (submissions.findSubmissionById(submissionId).isPresent()) {
-            return !submissions.findSubmissionById(submissionId).get().isReviewed();
-        } else {
-            return false;
-        }
+        return submissions.findSubmissionById(submissionId)
+                .filter(submission -> !submission.isReviewed())
+                .isPresent();
     }
 
     @Override

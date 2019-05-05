@@ -115,13 +115,13 @@ class SciencePortalTest {
         SciencePortal acm = new SciencePortal("ACM");
 
         Author author = new Author("x");
-        Assertions.assertFalse(acm.isContributor(author));
+        Assertions.assertFalse(acm.isRegisteredAsContributor(author));
 
         author.contributeTo(acm);
-        Assertions.assertFalse(acm.isContributor(author));
+        Assertions.assertFalse(acm.isRegisteredAsContributor(author));
 
         author.reviewFor(acm);
-        Assertions.assertTrue(acm.isContributor(author));
+        Assertions.assertTrue(acm.isRegisteredAsContributor(author));
 
     }
 }
