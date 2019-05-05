@@ -57,15 +57,22 @@ class SciencePortal implements ScienceEssayPublisher {
             throw new IllegalArgumentException(String.format("Contributor %s is not registered as contributor.", submission.getContributor()));
         }
 
-        submissions.add(submission);
-
-        reviewers.forEach(reviewer -> notify(submission, reviewer));
+        save(submission);
+        notifyReviewersOf(submission);
     }
 
-    private void notify(Submission submission, ScienceEssayReviewer reviewer) {
-        if (!reviewer.getName().equalsIgnoreCase(submission.getContributor().getName())) {
-            reviewer.notifyAbout(submission);
-        }
+    private void save(Submission submission) {
+        submissions.add(submission);
+    }
+
+    private void notifyReviewersOf(Submission submission) {
+        reviewers.stream()
+                .filter(reviewer -> !isContributor(reviewer, submission.getContributor()))
+                .forEach(reviewer -> reviewer.notifyAbout(submission));
+    }
+
+    private boolean isContributor(ScienceEssayReviewer reviewer, ScienceEssayContributor contributor) {
+        return reviewer.getName().equalsIgnoreCase(contributor.getName());
     }
 
     Set<String> getTitlesOfAllSubmissions() {
@@ -76,7 +83,7 @@ class SciencePortal implements ScienceEssayPublisher {
         boolean isContained = false;
         if (reviewers.contains(reviewer)) {
             for (ScienceEssayContributor contributor : contributors) {
-                if (reviewer.getName().equalsIgnoreCase(contributor.getName())) {
+                if (isContributor(reviewer, contributor)) {
                     isContained = true;
                 }
             }
